@@ -37,8 +37,8 @@ def eval_one_epoch(model, loader, npoint=50000, save_dir=None, ignore_msg=True, 
             output = output[0, 0].data.cpu().numpy()
             output = output.reshape(image.shape)
 
-            psnr = peak_signal_noise_ratio(image, output)
-            ssim = structural_similarity(image, output)
+            psnr = peak_signal_noise_ratio(image, output, data_range=1)
+            ssim = structural_similarity(image, output, data_range=1)
 
             if not ignore_msg:
                 print('{}, PSNR: {:.4}, SSIM: {:.4}'.format(
