@@ -5,8 +5,8 @@ numTrain: 50
 numVal: 50
 
 # System configuration
-DSD: 1000.0  # Distance Source Detector      (mm)
-DSO: 800.0  # Distance Source Origin        (mm)
+DSD: 1500.0  # Distance Source Detector      (mm)
+DSO: 1000.0  # Distance Source Origin        (mm)
 
 # Detector parameters
 nDetector: # Number of pixels              (px)
