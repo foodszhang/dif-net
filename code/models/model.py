@@ -123,7 +123,9 @@ class DIF_Net(nn.Module):
             p_feats = F.max_pool2d(p_feats, (1, n_view))
             p_feats = p_feats.squeeze(-1)  # B, C, N
         elif self.combine == "mlp":
+            # B, C, N, M -> B, M, N, C
             p_feats = p_feats.permute(0, 3, 1, 2)
+            print("4234234234", p_feats.shape)
             p_feats = self.view_mixer(p_feats)
             p_feats = p_feats.squeeze(1)
         else:
