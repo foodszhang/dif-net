@@ -6,6 +6,7 @@ import numpy as np
 from models.unet import UNet
 from models.unet3_plus import UNet3Plus
 from models.point_classifier import SurfaceClassifier
+from models.mlp import DensityNetwork
 
 
 def index_2d(feat, uv):
@@ -61,6 +62,7 @@ class DIF_Net(nn.Module):
         self.point_classifier = SurfaceClassifier(
             [mid_ch, 256, 64, 16, 1], no_residual=False
         )
+        self.mlp = DensityNetwork(None)
         print(f"DIF_Net, mid_ch: {mid_ch}, combine: {self.combine}")
 
     def forward(self, data, is_eval=False, eval_npoint=100000):
@@ -125,12 +127,13 @@ class DIF_Net(nn.Module):
         elif self.combine == "mlp":
             # B, C, N, M -> B, M, N, C
             p_feats = p_feats.permute(0, 3, 1, 2)
-            print("4234234234", p_feats.shape)
             p_feats = self.view_mixer(p_feats)
             p_feats = p_feats.squeeze(1)
         else:
             raise NotImplementedError
 
         # 3. point-wise classification
-        p_pred = self.point_classifier(p_feats)
+        # p_pred = self.point_classifier(p_feats)
+        p_pred = self.mlp(p_feats)
+
         return p_pred
