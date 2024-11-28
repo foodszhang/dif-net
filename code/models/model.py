@@ -125,7 +125,7 @@ class DIF_Net(nn.Module):
             p_feats = F.max_pool2d(p_feats, (1, n_view))
             p_feats = p_feats.squeeze(-1)  # B, C, N
         elif self.combine == "mlp":
-            # B, C, N, M -> B, M, N, C
+            # B, C, N, M
             p_feats = p_feats.permute(0, 3, 1, 2)
             p_feats = self.view_mixer(p_feats)
             p_feats = p_feats.squeeze(1)
@@ -134,6 +134,8 @@ class DIF_Net(nn.Module):
 
         # 3. point-wise classification
         # p_pred = self.point_classifier(p_feats)
+        p_feats = p_feats.permute(0, 2, 1)
         p_pred = self.mlp(p_feats)
+        print("44234234", p_pred.shape)
 
         return p_pred
