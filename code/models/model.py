@@ -70,9 +70,9 @@ class DIF_Net(nn.Module):
         projs = data["projs"]  # B, M, C, W, H
         b, m, c, w, h = projs.shape
         projs = projs.reshape(b * m, c, w, h)  # B', C, W, H
-        proj_feats = self.image_encoder(projs)["fianal_pred"]
-        # if self.training:
-        #    proj_feats = proj_feats['final_pred']
+        proj_feats = self.image_encoder(projs)
+        if self.training:
+            proj_feats = proj_feats["final_pred"]
         proj_feats = list(proj_feats) if type(proj_feats) is tuple else [proj_feats]
         for i in range(len(proj_feats)):
             _, c_, w_, h_ = proj_feats[i].shape
