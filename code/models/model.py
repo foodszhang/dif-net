@@ -45,16 +45,16 @@ class DIF_Net(nn.Module):
         super().__init__()
         self.combine = combine
 
-        self.image_encoder = UNet(1, mid_ch)
-        # self.image_encoder = UNet3Plus(
-        #    num_classes=mid_ch,
-        #    encoder=None,
-        #    channels=[1, 64, 128, 256, 512],
-        #    #dropout=0.3,
-        #    transpose_final=False,
-        #    use_cgm=False,
-        #    fast_up=False
-        # )
+        # self.image_encoder = UNet(1, mid_ch)
+        self.image_encoder = UNet3Plus(
+            num_classes=mid_ch,
+            encoder=None,
+            channels=[1, 64, 128, 256, 512],
+            # dropout=0.3,
+            transpose_final=False,
+            use_cgm=False,
+            fast_up=False,
+        )
 
         if self.combine == "mlp":
             self.view_mixer = MLP([num_views, num_views // 2, 1])
@@ -70,7 +70,7 @@ class DIF_Net(nn.Module):
         projs = data["projs"]  # B, M, C, W, H
         b, m, c, w, h = projs.shape
         projs = projs.reshape(b * m, c, w, h)  # B', C, W, H
-        proj_feats = self.image_encoder(projs)
+        proj_feats = self.image_encoder(projs)["fianal_pred"]
         # if self.training:
         #    proj_feats = proj_feats['final_pred']
         proj_feats = list(proj_feats) if type(proj_feats) is tuple else [proj_feats]
@@ -134,8 +134,8 @@ class DIF_Net(nn.Module):
 
         # 3. point-wise classification
         # p_pred = self.point_classifier(p_feats)
-        p_feats = p_feats.permute(0, 2, 1)
+        # p_feats = p_feats.permute(0, 2, 1)
         p_pred = self.mlp(p_feats)
-        print("44234234", p_pred.shape)
+        # p_pred = p_pred.permute(0, 2, 1)
 
         return p_pred
